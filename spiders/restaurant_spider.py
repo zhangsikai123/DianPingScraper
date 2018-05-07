@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Created by Saki on 2016/12/21.
+# Created by Sikai on 2018/04/19.
 
 import re
 import string
@@ -21,11 +21,14 @@ class restaurantSpider(CrawlSpider):
     connection = pymongo.MongoClient(host = settings['MONGODB_HOST'], port = settings['MONGODB_PORT'])
     db = connection[settings['MONGODB_DBNAME']]
     all_restaurants = db['url'].find()
-    urls = []
-    for each in all_restaurants:
-        urls.append(each['url'])
-    connection.close()
-    start_urls.append('http://www.dianping.com/shop/92020785')
+
+    start = db['restaurant'].count()
+    urls = ['']
+    # for each in all_restaurants:
+    #     urls.append(each['url'])
+    # connection.close()
+
+    start_urls.append(urls)
     cnt = 0
 
     def parse(self, response):

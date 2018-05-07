@@ -1,5 +1,6 @@
 import scrapy
 
+# Created by Sikai on 2018/04/19.
 
 class Restaurant(scrapy.Item):
     _id = scrapy.Field()

@@ -4,6 +4,7 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
+# Created by Sikai on 2018/04/19.
 
 from scrapy import signals
 
@@ -43,9 +44,9 @@ class UAMiddleware(UserAgentMiddleware):
         "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"
     ]
 
-proxyServer = "http://proxy.abuyun.com:9020"
-proxyUser = "HDWG89OGC1BRXJZD"
-proxyPass = "268D7AD5BD83570F"
+proxyServer = "http-dyn.abuyun.com:9020"
+proxyUser = "H5LY20427XLM641D"
+proxyPass = "C8CE061D635B6E3D"
 proxyAuth = "Basic " + base64.b64encode(proxyUser + ":" + proxyPass)
 
 class ProxyMiddleware(object):

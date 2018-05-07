@@ -8,6 +8,7 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+import pymongo
 
 BOT_NAME = 'dianping'
 
@@ -17,8 +18,6 @@ NEWSPIDER_MODULE = 'spiders'
 CATEGORY = ['','g132','g117','g110','g112','g508','g111','g113','g116','g311','g114','g118','g251','g115','g103','g34014',
             'g102','g219','g104','g109','g3243','g101','g106','g1817','g250','g26482','g26481','g26483','g34055','g1783',
             'g1338','g2714']
-
-DISTRICT = ['','r5952','r9157','r5951','c434','c4453','c4455','c435','c4454']
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'
@@ -52,7 +51,9 @@ COOKIES_ENABLED = False
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 SPIDER_MIDDLEWARES = {
-  'middlewares.UAMiddleware': 543,
+  'middlewares.ProxyMiddleware': 1,
+  'middlewares.UAMiddleware': 1
+
 }
 
 # Enable or disable downloader middlewares
@@ -99,3 +100,32 @@ MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
 MONGODB_DBNAME = 'dianping'
 CLOSESPIDER_ERRORCOUNT = 20
+
+
+
+
+def extract_seeds_for_district():
+    connection = pymongo.MongoClient(host=MONGODB_HOST, port=MONGODB_PORT)
+    db = connection[MONGODB_DBNAME]
+    collection = db['crawling_seeds']
+    seeds = collection.find({})
+    return [seed['code'] for seed in seeds]
+
+DISTRICT = extract_seeds_for_district()
+
+
+def load_seeds(file=None):
+    if file is None:
+        prefix = 'http://www.dianping.com/beijing/ch10/'
+        district_seeds = DISTRICT
+        for i in ['r5952', 'r9157', 'r5951', 'c434', 'c4453', 'c4455', 'c435', 'c4454']:
+            district_seeds.remove(i)
+        return [prefix + category + district for category in CATEGORY for district in district_seeds]
+
+    res = []
+    with open(file, 'r') as f:
+        for l in f:
+            res.append(l)
+    return res
+
+START_URLS = load_seeds('/Users/zhangsikai/Desktop/seeds')
